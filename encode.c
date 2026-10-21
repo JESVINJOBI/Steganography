@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "encode.h"
 #include "types.h"
-
+#include <string.h>
 /* Function Definitions */
 
 /* Get image size
@@ -73,30 +73,33 @@ Status open_files(EncodeInfo *encInfo)
     // No failure return e_success
     return e_success;
 }
-Status read_and_validate_encode_args(char *argv[], EncodeInfo *encInfo)
+Status read_and_validate_encode_args(char *argv[],
+                                     EncodeInfo *encInfo)
 {
-    /*
-    ->check the argv[2] must be having ".bmp" extention
-        if yes encinfo-> src_image_fname=argv[2]
-            -open the file in read mode argv[2]
-            //encinfo -> fptr_src_image =fopen()
-            if teh file not present ,return e_failure
-        if not ,return e_failure*/
-    /*
-    ->check the argv[3] is a valid file
-        encinfo-> secret_fname=argv[3]
-            -is the file present or not
-            if present encinfo -> fptr_secret =fopen()
-            
-            if not ,return e_failure*/
-    /*
-    ->check the argv[4] is a NULL
-        encinfo-> secret_fname=argv[3]
-            
-            if not NUll encinfo -> stego_image_fname =argv[4]
-            
-            if Null not encinfo -> stego_image_fname ="defualt.bmp"
-        
-        
-        chack    */
+    int len;
+    len = strlen(argv[2]);
+    if (len < 4 ||
+        strcmp(argv[2] + len - 4, ".bmp") != 0)
+    {
+        printf("ERROR: Source image must have .bmp extension\n");
+        return e_failure;
+    }
+
+    encInfo->src_image_fname = argv[2];
+    encInfo->secret_fname = argv[3];
+
+    if (argv[4] != NULL)
+    {
+        encInfo->stego_image_fname = argv[4];
+    }
+    else
+    {
+        encInfo->stego_image_fname = "steged_img.bmp";
+    }
+    if (open_files(encInfo) == e_failure)
+    {
+        return e_failure;
+    }
+
+    return e_success;
 }
