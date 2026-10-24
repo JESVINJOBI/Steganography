@@ -60,7 +60,7 @@ Status read_and_validate_encode_args(char *argv[],
     }
     
 
-    encInfo->fptr_src_image = fopen(encInfo->src_image_fname, "r");
+    encInfo->fptr_src_image = fopen(encInfo->src_image_fname, "rb");
 
     if (encInfo->fptr_src_image == NULL)
     {
@@ -90,7 +90,7 @@ Status read_and_validate_encode_args(char *argv[],
         encInfo->stego_image_fname = "steged_img.bmp";
     }
     // Stego Image file
-    encInfo->fptr_stego_image = fopen(encInfo->stego_image_fname, "w");
+    encInfo->fptr_stego_image = fopen(encInfo->stego_image_fname, "wb");
     // Do Error handling
     if (encInfo->fptr_stego_image == NULL)
     {
@@ -112,6 +112,12 @@ Status do_encoding(EncodeInfo *encInfo)
     }
     else
         printf("Image capacity is sufficient.\n");
+
+    if(copy_bmp_header(encInfo->fptr_src_image,encInfo->fptr_stego_image)==e_failure)
+    
+        return e_failure;
+    else
+        printf("BMP header copied successfully.\n");
 return e_success;
 }
 
@@ -120,9 +126,26 @@ Status check_capacity(EncodeInfo *encInfo)
     encInfo -> size_secret_file = get_file_size(encInfo -> fptr_secret);
     long capacity=((encInfo -> size_secret_file)+14)*8;
     //14->secret_file_extension(4)+image_extension(4)+extension_size(4)+magic_string(2)
-    
+
     if(get_image_size_for_bmp(encInfo->fptr_src_image)>=capacity)
         return e_success;
 
     return e_failure;
+}
+
+Status copy_bmp_header(FILE *fptr_src_image, FILE *fptr_dest_image)
+{
+    char header[54];
+    rewind(fptr_src_image);
+    if(fread(header,1,54,fptr_src_image)!=54)
+    {
+        printf("ERROR : ERROR: Cannot read header from source image.\n");
+        return e_failure;
+    }
+    if(fwrite(header,1,54,fptr_dest_image)!=54)
+    {
+        printf("ERROR : Cannot write header to output image.\n");
+        return e_failure;
+    }
+    return e_success;
 }
