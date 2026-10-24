@@ -22,11 +22,19 @@ int main(int argc,char *argv[])
         {
             printf("Validation sucesssful.\n");
             printf("Encoding selected.\n");
-            //do_encoding(&encInfo)-=e_success;
+            if(do_encoding(&encInfo)==e_success)
+            {
+                printf("Encoding successful.\n");
+            }
+            else
+            {
+                printf("Encoding failed.\n");
+                return 1;
+            }
         }
         else
         {
-            printf("Encoding failed.\n");
+            printf("Validation failed.\n");
             return 1;
         }    
     }

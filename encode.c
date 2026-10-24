@@ -28,6 +28,14 @@ uint get_image_size_for_bmp(FILE *fptr_image)
     return width * height * 3;
 }
 
+uint get_file_size(FILE *fptr)
+{
+    fseek(fptr, 0, SEEK_END);
+    uint size = ftell(fptr);
+    rewind(fptr);
+    return size;
+}
+
 /* 
  * Get File pointers for i/p and o/p files
  * Inputs: Src Image file, Secret file and
@@ -93,4 +101,28 @@ Status read_and_validate_encode_args(char *argv[],
     }
 
     return e_success;
+}
+
+Status do_encoding(EncodeInfo *encInfo)
+{
+    if(check_capacity(encInfo)==e_failure)
+    {
+        printf("ERROR: Insufficient image capacity.\n");
+        return e_failure;
+    }
+    else
+        printf("Image capacity is sufficient.\n");
+return e_success;
+}
+
+Status check_capacity(EncodeInfo *encInfo)
+{
+    encInfo -> size_secret_file = get_file_size(encInfo -> fptr_secret);
+    long capacity=((encInfo -> size_secret_file)+14)*8;
+    //14->secret_file_extension(4)+image_extension(4)+extension_size(4)+magic_string(2)
+    
+    if(get_image_size_for_bmp(encInfo->fptr_src_image)>=capacity)
+        return e_success;
+
+    return e_failure;
 }
