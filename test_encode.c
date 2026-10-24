@@ -10,13 +10,18 @@ int main(int argc,char *argv[])
         printf("ERROR: Insufficient arguments\n");
         return 1;
     }
+    if(argc>5)
+    {
+        printf("ERROR: Excess arguments\n");
+        return 1;
+    }
     OperationType op_type=check_operation_type(argv[1][1]);
     if(op_type==e_encode)
     {
-        printf("Encoding selected.\n");
         if(read_and_validate_encode_args(argv,&encInfo)==e_success)
         {
             printf("Validation sucesssful.\n");
+            printf("Encoding selected.\n");
             //do_encoding(&encInfo)-=e_success;
         }
         else

@@ -39,6 +39,9 @@ uint get_image_size_for_bmp(FILE *fptr_image)
 Status read_and_validate_encode_args(char *argv[],
                                      EncodeInfo *encInfo)
 {
+    encInfo->src_image_fname = argv[2];
+    encInfo->secret_fname = argv[3];
+
     int len;
     len = strlen(argv[2]);
     if (len < 4 ||
@@ -47,9 +50,28 @@ Status read_and_validate_encode_args(char *argv[],
         printf("ERROR: Source image must have .bmp extension\n");
         return e_failure;
     }
+    
 
-    encInfo->src_image_fname = argv[2];
-    encInfo->secret_fname = argv[3];
+    encInfo->fptr_src_image = fopen(encInfo->src_image_fname, "r");
+
+    if (encInfo->fptr_src_image == NULL)
+    {
+    	perror("fopen");
+    	fprintf(stderr, "ERROR: Unable to open source file %s\n", encInfo->src_image_fname);
+
+    	return e_failure;
+    }
+
+    encInfo->fptr_secret = fopen(encInfo->secret_fname, "r");
+
+    if (encInfo->fptr_secret == NULL)
+    {
+    	perror("fopen");
+    	fprintf(stderr, "ERROR: Unable to open text file %s\n", encInfo->secret_fname);
+
+    	return e_failure;
+    }
+
 
     if (argv[4] != NULL)
     {
@@ -65,7 +87,7 @@ Status read_and_validate_encode_args(char *argv[],
     if (encInfo->fptr_stego_image == NULL)
     {
     	perror("fopen");
-    	fprintf(stderr, "ERROR: Unable to open file %s\n", encInfo->stego_image_fname);
+    	fprintf(stderr, "ERROR: Unable to open output file %s\n", encInfo->stego_image_fname);
 
     	return e_failure;
     }
