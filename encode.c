@@ -35,44 +35,7 @@ uint get_image_size_for_bmp(FILE *fptr_image)
  * Output: FILE pointer for above files
  * Return Value: e_success or e_failure, on file errors
  */
-Status open_files(EncodeInfo *encInfo)
-{
-    // Src Image file
-    encInfo->fptr_src_image = fopen(encInfo->src_image_fname, "r");
-    // Do Error handling
-    if (encInfo->fptr_src_image == NULL)
-    {
-    	perror("fopen");
-    	fprintf(stderr, "ERROR: Unable to open file %s\n", encInfo->src_image_fname);
 
-    	return e_failure;
-    }
-
-    // Secret file
-    encInfo->fptr_secret = fopen(encInfo->secret_fname, "r");
-    // Do Error handling
-    if (encInfo->fptr_secret == NULL)
-    {
-    	perror("fopen");
-    	fprintf(stderr, "ERROR: Unable to open file %s\n", encInfo->secret_fname);
-
-    	return e_failure;
-    }
-
-    // Stego Image file
-    encInfo->fptr_stego_image = fopen(encInfo->stego_image_fname, "w");
-    // Do Error handling
-    if (encInfo->fptr_stego_image == NULL)
-    {
-    	perror("fopen");
-    	fprintf(stderr, "ERROR: Unable to open file %s\n", encInfo->stego_image_fname);
-
-    	return e_failure;
-    }
-
-    // No failure return e_success
-    return e_success;
-}
 Status read_and_validate_encode_args(char *argv[],
                                      EncodeInfo *encInfo)
 {
@@ -96,9 +59,15 @@ Status read_and_validate_encode_args(char *argv[],
     {
         encInfo->stego_image_fname = "steged_img.bmp";
     }
-    if (open_files(encInfo) == e_failure)
+    // Stego Image file
+    encInfo->fptr_stego_image = fopen(encInfo->stego_image_fname, "w");
+    // Do Error handling
+    if (encInfo->fptr_stego_image == NULL)
     {
-        return e_failure;
+    	perror("fopen");
+    	fprintf(stderr, "ERROR: Unable to open file %s\n", encInfo->stego_image_fname);
+
+    	return e_failure;
     }
 
     return e_success;

@@ -13,15 +13,15 @@ int main(int argc,char *argv[])
     OperationType op_type=check_operation_type(argv[1][1]);
     if(op_type==e_encode)
     {
-        printf("Encoding selected\n");
+        printf("Encoding selected.\n");
         if(read_and_validate_encode_args(argv,&encInfo)==e_success)
         {
-            printf("Validation sucesssful");
-            //do_encoding(&encInfo);
+            printf("Validation sucesssful.\n");
+            //do_encoding(&encInfo)-=e_success;
         }
         else
         {
-            printf("Encoding failed.");
+            printf("Encoding failed.\n");
             return 1;
         }    
     }
