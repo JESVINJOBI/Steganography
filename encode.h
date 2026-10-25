@@ -68,7 +68,7 @@ Status encode_magic_string(const char *magic_string, EncodeInfo *encInfo);
 /* Encode secret file extenstion */
 Status encode_secret_file_extn(const char *file_extn, EncodeInfo *encInfo);
 
-Status encode_secret_file_extn_size(uint size, EncodeInfo *encInfo);
+Status encode_secret_file_extn_size(int size, EncodeInfo *encInfo);
 
 /* Encode secret file size */
 Status encode_secret_file_size(long file_size, EncodeInfo *encInfo);

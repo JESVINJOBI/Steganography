@@ -125,8 +125,22 @@ Status do_encoding(EncodeInfo *encInfo)
     {
         return e_failure;
     }
+    char *dot = strrchr(encInfo->secret_fname, '.');
+    if (dot == NULL)
+    {
+        printf("ERROR: Secret file extension not found.\n");
+        return e_failure;
+    }
+    strcpy(encInfo->extn_secret_file, dot);
 
-    
+    if (encode_secret_file_extn_size(strlen(encInfo->extn_secret_file), encInfo) == e_failure)
+    {
+        printf("ERROR: Secret file extension size encoding failed.\n");
+        return e_failure;
+    }
+    printf("Secret file extension size encoding is successful.\n");
+
+
 return e_success;
 }
 
@@ -206,9 +220,19 @@ Status encode_byte_to_lsb(char data, char *image_buffer)
         unsigned char bit = (byte >> (7 - i)) & 1;
 
         image_byte = (image_byte & 0xFE) | bit;
-
+        
         image_buffer[i] = (char)image_byte;
     }
 
     return e_success;
 }
+Status encode_secret_file_extn_size(int size, EncodeInfo *encInfo)
+{
+    if (encode_data_to_image((char *)&size, sizeof(int),encInfo->fptr_src_image,encInfo->fptr_stego_image) == e_failure)
+    {
+        return e_failure;
+    }
+
+    return e_success;
+}
+
