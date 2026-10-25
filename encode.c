@@ -139,7 +139,11 @@ Status do_encoding(EncodeInfo *encInfo)
         return e_failure;
     }
     printf("Secret file extension size encoding is successful.\n");
-
+    if (encode_secret_file_extn(encInfo->extn_secret_file, encInfo) == e_failure)
+    {
+        printf("ERROR: Secret file extension encoding failed.\n");
+        return e_failure;
+    }
 
 return e_success;
 }
@@ -233,6 +237,20 @@ Status encode_secret_file_extn_size(int size, EncodeInfo *encInfo)
         return e_failure;
     }
 
+    return e_success;
+}
+
+Status encode_secret_file_extn(const char *file_extn, EncodeInfo *encInfo)
+{
+    int len=strlen(file_extn);
+
+    if (encode_data_to_image((char *)file_extn, len,encInfo->fptr_src_image,encInfo->fptr_stego_image) == e_failure)
+    {
+        printf("ERROR: Secret file extension encoding failed.\n");
+        return e_failure;
+    }
+
+    printf("Secret file extension encoded successfully.\n");
     return e_success;
 }
 
