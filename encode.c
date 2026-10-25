@@ -114,10 +114,17 @@ Status do_encoding(EncodeInfo *encInfo)
         printf("Image capacity is sufficient.\n");
 
     if(copy_bmp_header(encInfo->fptr_src_image,encInfo->fptr_stego_image)==e_failure)
-    
+    {
+        printf("ERROR: BMP header coping is failed.\n");
         return e_failure;
+    }
     else
         printf("BMP header copied successfully.\n");
+
+    if(encode_magic_string(MAGIC_STRING,encInfo)==e_failure)
+    {
+        return e_failure;
+    }
 return e_success;
 }
 
@@ -147,5 +154,58 @@ Status copy_bmp_header(FILE *fptr_src_image, FILE *fptr_dest_image)
         printf("ERROR : Cannot write header to output image.\n");
         return e_failure;
     }
+    return e_success;
+}
+
+Status encode_magic_string(const char *magic_string, EncodeInfo *encInfo)
+{
+    int len=strlen(magic_string);
+    if(encode_data_to_image((char *)magic_string, len,encInfo->fptr_src_image,encInfo->fptr_stego_image) == e_failure)
+    {
+        printf("ERROR: Magic string encoding failed.\n");
+        return e_failure;
+    }
+    printf("Magic string encoded successfully.\n");
+    return e_success;
+}
+
+Status encode_data_to_image(char *data, int size, FILE *fptr_src_image, FILE *fptr_stego_image)
+{
+    char buffer[8];
+    for(int i=0;i<size;i++)
+    {
+        if(fread(buffer,1,8,fptr_src_image)!=8)
+        {
+            printf("ERROR: Cannot read 8 bytes from source image.\n");
+            return e_failure;
+        }
+        if(encode_byte_to_lsb(data[i],buffer)==e_failure)
+        {
+            printf("ERROR: Byte encoding failed.\n");
+            return e_failure;
+        }
+        if(fwrite(buffer,1,8,fptr_stego_image)!=8)
+        {
+            printf("ERROR: Cannot write image data.\n");
+            return e_failure;
+        }
+
+    }
+}
+
+Status encode_byte_to_lsb(char data, char *image_buffer)
+{
+    unsigned char byte = (unsigned char)data;
+
+    for (int i = 0; i < 8; i++)
+    {
+        unsigned char image_byte = (unsigned char)image_buffer[i];
+        unsigned char bit = (byte >> (7 - i)) & 1;
+
+        image_byte = (image_byte & 0xFE) | bit;
+
+        image_buffer[i] = (char)image_byte;
+    }
+
     return e_success;
 }
