@@ -125,6 +125,8 @@ Status do_encoding(EncodeInfo *encInfo)
     {
         return e_failure;
     }
+
+    
 return e_success;
 }
 
@@ -191,6 +193,7 @@ Status encode_data_to_image(char *data, int size, FILE *fptr_src_image, FILE *fp
         }
 
     }
+    return e_success;
 }
 
 Status encode_byte_to_lsb(char data, char *image_buffer)
