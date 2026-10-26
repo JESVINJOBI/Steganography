@@ -155,6 +155,17 @@ Status do_encoding(EncodeInfo *encInfo)
     }
 
 
+    if (encode_secret_file_data(encInfo) == e_failure)
+    {
+        return e_failure;
+    }
+    if (copy_remaining_img_data(encInfo->fptr_src_image,
+                                encInfo->fptr_stego_image) == e_failure)
+    {
+        return e_failure;
+    }
+
+
 return e_success;
 }
 
@@ -275,5 +286,57 @@ Status encode_secret_file_size(long file_size, EncodeInfo *encInfo)
     }
 
     printf("Secret file size encoded successfully.\n");
+    return e_success;
+}
+
+Status encode_secret_file_data(EncodeInfo *encInfo)
+{
+    char buffer[MAX_SECRET_BUF_SIZE];
+    size_t bytes_read;
+
+    rewind(encInfo->fptr_secret);
+
+    while ((bytes_read = fread(buffer, 1, sizeof(buffer),
+                               encInfo->fptr_secret)) > 0)
+    {
+        if (encode_data_to_image(buffer, (int)bytes_read,
+                                 encInfo->fptr_src_image,
+                                 encInfo->fptr_stego_image) == e_failure)
+        {
+            printf("ERROR: Secret file data encoding failed.\n");
+            return e_failure;
+        }
+    }
+
+    if (ferror(encInfo->fptr_secret))
+    {
+        printf("ERROR: Cannot read secret file.\n");
+        return e_failure;
+    }
+
+    printf("Secret file data encoded successfully.\n");
+    return e_success;
+}
+
+Status copy_remaining_img_data(FILE *fptr_src, FILE *fptr_dest)
+{
+    char buffer[1024];
+    size_t bytes_read;
+
+    while ((bytes_read = fread(buffer, 1, sizeof(buffer), fptr_src)) > 0)
+    {
+        if (fwrite(buffer, 1, bytes_read, fptr_dest) != bytes_read)
+        {
+            printf("ERROR: Failed to copy remaining image data.\n");
+            return e_failure;
+        }
+    }
+
+    if (ferror(fptr_src))
+    {
+        printf("ERROR: Failed to read remaining image data.\n");
+        return e_failure;
+    }
+
     return e_success;
 }
