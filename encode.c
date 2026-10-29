@@ -277,9 +277,7 @@ Status encode_secret_file_extn(const char *file_extn, EncodeInfo *encInfo)
 
 Status encode_secret_file_size(long file_size, EncodeInfo *encInfo)
 {
-    if (encode_data_to_image((char *)&file_size, sizeof(file_size),
-                             encInfo->fptr_src_image,
-                             encInfo->fptr_stego_image) == e_failure)
+    if (encode_data_to_image((char *)&file_size, sizeof(file_size),encInfo->fptr_src_image, encInfo->fptr_stego_image) == e_failure)
     {
         printf("ERROR: Secret file size encoding failed.\n");
         return e_failure;
@@ -296,12 +294,10 @@ Status encode_secret_file_data(EncodeInfo *encInfo)
 
     rewind(encInfo->fptr_secret);
 
-    while ((bytes_read = fread(buffer, 1, sizeof(buffer),
-                               encInfo->fptr_secret)) > 0)
+    while ((bytes_read = fread(buffer, 1, sizeof(buffer),encInfo->fptr_secret)) > 0)
     {
-        if (encode_data_to_image(buffer, (int)bytes_read,
-                                 encInfo->fptr_src_image,
-                                 encInfo->fptr_stego_image) == e_failure)
+        if (encode_data_to_image(buffer, (int)bytes_read,encInfo->fptr_src_image,
+                                encInfo->fptr_stego_image) == e_failure)
         {
             printf("ERROR: Secret file data encoding failed.\n");
             return e_failure;
