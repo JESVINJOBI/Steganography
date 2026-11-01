@@ -118,15 +118,15 @@ Status decode_data_from_image(char *data, int size, FILE *fptr_stego_image)
 {
     char image_buffer[8];
 
-    for (int i = 0; i < size; i++)
+    for (int i=0;i<size;i++)
     {
-        if (fread(image_buffer, 1, 8, fptr_stego_image) != 8)
+        if (fread(image_buffer,1,8,fptr_stego_image)!=8)
         {
             printf("ERROR: Unable to read image data\n");
             return e_failure;
         }
 
-        if (decode_byte_from_lsb(&data[i], image_buffer) == e_failure)
+        if (decode_byte_from_lsb(&data[i],image_buffer)==e_failure)
         {
             printf("ERROR: Unable to decode byte\n");
             return e_failure;
