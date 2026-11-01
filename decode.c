@@ -73,6 +73,13 @@ Status do_decoding(DecodeInfo *decInfo)
     }
     data[size]='\0';
     printf("Decoded character: %s\n", data);
+    if (strcmp(data, MAGIC_STRING) != 0)
+    {
+        printf("ERROR: Magic string does not match\n");
+        return e_failure;
+    }
+
+    printf("Magic string verified successfully.\n");
     return e_success;
 }
 
