@@ -9,20 +9,17 @@
 
 typedef struct _DecodeInfo
 {
-    /* Stego Image Info */
+    /* Encoded Image Info */
     char *stego_image_fname;
     FILE *fptr_stego_image;
 
     /* Secret File Info */
-    char *secret_fname;
-    FILE *fptr_secret;
-    char extn_secret_file[MAX_FILE_SUFFIX];
-    long size_secret_file;
+    char test_fname[20];
+    FILE *fptr_test;
+    char extn_test_file[MAX_FILE_SUFFIX];
+    long size_test_file;
 
 } DecodeInfo;
-
-/* Check operation type */
-OperationType check_operation_type(char opt);
 
 Status read_and_validate_decode_args(char *argv[], DecodeInfo *decInfo);
 

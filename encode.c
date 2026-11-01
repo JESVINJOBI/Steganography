@@ -44,8 +44,7 @@ uint get_file_size(FILE *fptr)
  * Return Value: e_success or e_failure, on file errors
  */
 
-Status read_and_validate_encode_args(char *argv[],
-                                     EncodeInfo *encInfo)
+Status read_and_validate_encode_args(char *argv[],EncodeInfo *encInfo)
 {
     encInfo->src_image_fname = argv[2];
     encInfo->secret_fname = argv[3];

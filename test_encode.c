@@ -66,7 +66,7 @@ int main(int argc,char *argv[])
         {
             printf("Validation sucesssful.\n");
             printf("Decoding selected.\n");
-           /* if(do_decoding(&decInfo)==e_success)
+           if(do_decoding(&decInfo)==e_success)
             {
                 printf("Decoding successful.\n");
             }
@@ -74,7 +74,7 @@ int main(int argc,char *argv[])
             {
                 printf("Decoding failed.\n");
                 return 1;
-            }*/
+            }
         }
         else
         {
