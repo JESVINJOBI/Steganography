@@ -98,7 +98,18 @@ Status do_decoding(DecodeInfo *decInfo)
         printf("ERROR: Cannot decode secret file size\n");
         return e_failure;
     }
-    printf("Secret file size: %ld bytes\n", decInfo->size_test_file);
+    printf("Secret file size:%ld bytes\n",decInfo->size_test_file);
+    strcat(decInfo->test_fname, decInfo->extn_test_file);
+    decInfo->fptr_test=fopen(decInfo->test_fname,"wb");
+
+    if (decInfo->fptr_test==NULL)
+    {
+        printf("ERROR: Cannot create output file\n");
+        return e_failure;
+    }
+    printf("Output file created successfully: %s\n",decInfo->test_fname);
+
+    
     return e_success;
 }
 
@@ -173,3 +184,5 @@ Status decode_secret_file_size(long *file_size, DecodeInfo *decInfo)
 
     return e_success;
 }
+
+
