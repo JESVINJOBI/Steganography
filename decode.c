@@ -46,7 +46,6 @@ Status read_and_validate_decode_args(char *argv[],DecodeInfo *decInfo)
     return e_success;
 }
 
-
 Status do_decoding(DecodeInfo *decInfo)
 {
     char image_buffer[8];
@@ -80,6 +79,16 @@ Status do_decoding(DecodeInfo *decInfo)
     }
 
     printf("Magic string verified successfully.\n");
+    int extn_size;
+    if(decode_secret_file_extn_size(&extn_size,decInfo)==e_failure)
+    {
+        printf("ERROR: Cannot decode extension size\n");
+        return e_failure;
+    }
+    printf("Extension size: %d\n",extn_size);
+    
+
+    printf("Secret file extension: %s\n", decInfo->extn_test_file);
     return e_success;
 }
 
@@ -95,3 +104,35 @@ Status decode_byte_from_lsb(char *data, char *image_buffer)
     *data = ch;
     return e_success;
 }
+
+Status decode_secret_file_extn_size(int *size, DecodeInfo *decInfo)
+{
+    char buffer[sizeof(int)];
+    if (decode_data_from_image(buffer,sizeof(int),decInfo->fptr_stego_image) == e_failure)
+        return e_failure;
+    memcpy(size,buffer,sizeof(int));
+    return e_success;
+}
+
+Status decode_data_from_image(char *data, int size, FILE *fptr_stego_image)
+{
+    char image_buffer[8];
+
+    for (int i = 0; i < size; i++)
+    {
+        if (fread(image_buffer, 1, 8, fptr_stego_image) != 8)
+        {
+            printf("ERROR: Unable to read image data\n");
+            return e_failure;
+        }
+
+        if (decode_byte_from_lsb(&data[i], image_buffer) == e_failure)
+        {
+            printf("ERROR: Unable to decode byte\n");
+            return e_failure;
+        }
+    }
+
+    return e_success;
+}
+
