@@ -91,10 +91,18 @@ Status do_decoding(DecodeInfo *decInfo)
         printf("ERROR: Cannot decode secret file extension\n");
         return e_failure;
     }
-
     printf("Secret file extension: %s\n", decInfo->extn_test_file);
+
+    if (decode_secret_file_size(&decInfo->size_test_file, decInfo)==e_failure)
+    {
+        printf("ERROR: Cannot decode secret file size\n");
+        return e_failure;
+    }
+    printf("Secret file size: %ld bytes\n", decInfo->size_test_file);
     return e_success;
 }
+
+
 
 Status decode_byte_from_lsb(char *data, char *image_buffer)
 {
@@ -149,5 +157,19 @@ Status decode_secret_file_extn(int size, DecodeInfo *decInfo)
     }
     buffer[size] = '\0';
     strcpy(decInfo->extn_test_file, buffer);
+    return e_success;
+}
+Status decode_secret_file_size(long *file_size, DecodeInfo *decInfo)
+{
+    char buffer[sizeof(long)];
+
+    if (decode_data_from_image(buffer,sizeof(long),decInfo->fptr_stego_image)==e_failure)
+    {
+        printf("ERROR: Cannot decode secret file size\n");
+        return e_failure;
+    }
+
+    memcpy(file_size,buffer,sizeof(long));
+
     return e_success;
 }
