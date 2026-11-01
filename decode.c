@@ -49,13 +49,42 @@ Status read_and_validate_decode_args(char *argv[],DecodeInfo *decInfo)
 
 Status do_decoding(DecodeInfo *decInfo)
 {
+    char image_buffer[8];
+    char data[20];
+    int size = strlen(MAGIC_STRING);
     if (fseek(decInfo->fptr_stego_image,54,SEEK_SET) != 0)
     {
         printf("ERROR: Cannot skip BMP header\n");
         return e_failure;
     }    
-    
-   
+    for (int i=0;i<size;i++)
+    {
+        if (fread(image_buffer,1,8,decInfo->fptr_stego_image)!=8)
+        {
+            printf("ERROR: Cannot read image bytes\n");
+            return e_failure;
+        }
+        if (decode_byte_from_lsb(&data[i],image_buffer)==e_failure)
+        {
+            printf("ERROR: Cannot decode byte from LSB\n");
+            return e_failure;
+        }
+        
+    }
+    data[size]='\0';
+    printf("Decoded character: %s\n", data);
     return e_success;
 }
 
+Status decode_byte_from_lsb(char *data, char *image_buffer)
+{
+    unsigned char ch = 0;
+    for (int i=0;i<8;i++)
+    {
+        unsigned char bit=image_buffer[i]&1;
+        ch=ch<<1;
+        ch=ch|bit;
+    }
+    *data = ch;
+    return e_success;
+}
