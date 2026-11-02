@@ -70,7 +70,7 @@ Status do_decoding(DecodeInfo *decInfo)
         }
     }
     data[size]='\0';
-    printf("Decoded character: %s\n", data);
+    
     if (strcmp(data, MAGIC_STRING) != 0)
     {
         printf("ERROR: Magic string does not match\n");
@@ -84,21 +84,21 @@ Status do_decoding(DecodeInfo *decInfo)
         printf("ERROR: Cannot decode extension size\n");
         return e_failure;
     }
-    printf("Extension size: %d\n",extn_size);
+    
 
     if (decode_secret_file_extn(extn_size,decInfo)==e_failure)
     {
         printf("ERROR: Cannot decode secret file extension\n");
         return e_failure;
     }
-    printf("Secret file extension: %s\n", decInfo->extn_test_file);
+    
 
     if (decode_secret_file_size(&decInfo->size_test_file, decInfo)==e_failure)
     {
         printf("ERROR: Cannot decode secret file size\n");
         return e_failure;
     }
-    printf("Secret file size:%ld bytes\n",decInfo->size_test_file);
+    
     strcat(decInfo->test_fname, decInfo->extn_test_file);
     decInfo->fptr_test=fopen(decInfo->test_fname,"wb");
 
@@ -109,7 +109,13 @@ Status do_decoding(DecodeInfo *decInfo)
     }
     printf("Output file created successfully: %s\n",decInfo->test_fname);
 
-    
+    if (decode_secret_file_data(decInfo)==e_failure)
+    {
+        printf("ERROR: Secret file data decoding failed\n");
+        return e_failure;
+    }
+
+    printf("Secret file data decoded successfully.\n");
     return e_success;
 }
 
@@ -185,4 +191,24 @@ Status decode_secret_file_size(long *file_size, DecodeInfo *decInfo)
     return e_success;
 }
 
+Status decode_secret_file_data(DecodeInfo *decInfo)
+{
+    char ch;
 
+    for (int i = 0; i<decInfo->size_test_file;i++)
+    {
+        if (decode_data_from_image(&ch,1,decInfo->fptr_stego_image)==e_failure)
+        {
+            printf("ERROR: Cannot decode secret data\n");
+            return e_failure;
+        }
+
+        if (fwrite(&ch,1,1,decInfo->fptr_test)!=1)
+        {
+            printf("ERROR: Cannot write secret data\n");
+            return e_failure;
+        }
+    }
+
+    return e_success;
+}
